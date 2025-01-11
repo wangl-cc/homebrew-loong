@@ -38,9 +38,9 @@ jobs:
         run: brew install-bundler-gems
 
       - name: Configure Git User
-        uses: Homebrew/actions/git-user-config@master
-        with:
-          username: ${{ github.event_name == 'schedule' && 'github-actions[bot]' || github.actor }}
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
 
       - name: Bump Formulae
         env:
@@ -54,7 +54,7 @@ jobs:
             outdated=$(echo "$formulae" | jq -r ".[$i].version.outdated")
             if [ "$outdated" = "true" ]; then
               echo "Bumping \`$formula\` to \`$version\`"
-              brew bump-formula-pr "maaassistantarknights/tap/$formula" \
+              brew bump-formula-pr "wangl-cc/loong/$formula" \
                 --no-audit \
                 --no-browse \
                 --version="$version" \
@@ -64,24 +64,24 @@ jobs:
             fi
           done
 
-      # - name: Bump Casks
-      #   env:
-      #     HOMEBREW_GITHUB_API_TOKEN: ${{ secrets.HOMEBREW_LOONG_BUMP }}
-      #   run: |
-      #     casks=$(brew livecheck --quiet --cask --json --tap="$GITHUB_REPOSITORY")
-      #     len=$(echo "$casks" | jq length)
-      #     for ((i=0; i < "$len"; i++)); do
-      #       cask=$(echo "$casks" | jq -r ".[$i].cask")
-      #       version=$(echo "$casks" | jq -r ".[$i].version.latest")
-      #       outdated=$(echo "$casks" | jq -r ".[$i].version.outdated")
-      #       if [ "$outdated" = "true" ]; then
-      #         echo "Bumping \`$cask\` to \`$version\`"
-      #         brew bump-cask-pr "maaassistantarknights/tap/$cask" \
-      #           --no-audit \
-      #           --no-browse \
-      #           --version="$version" \
-      #           --message="Bump \`$cask\` to \`$version\`"
-      #       else
-      #         echo "\`$cask\` is up to date"
-      #       fi
-      #     done
+      - name: Bump Casks
+        env:
+          HOMEBREW_GITHUB_API_TOKEN: ${{ secrets.HOMEBREW_LOONG_BUMP }}
+        run: |
+          casks=$(brew livecheck --quiet --cask --json --tap="$GITHUB_REPOSITORY")
+          len=$(echo "$casks" | jq length)
+          for ((i=0; i < "$len"; i++)); do
+            cask=$(echo "$casks" | jq -r ".[$i].cask")
+            version=$(echo "$casks" | jq -r ".[$i].version.latest")
+            outdated=$(echo "$casks" | jq -r ".[$i].version.outdated")
+            if [ "$outdated" = "true" ]; then
+              echo "Bumping \`$cask\` to \`$version\`"
+              brew bump-cask-pr "wangl-cc/loong/$cask" \
+                --no-audit \
+                --no-browse \
+                --version="$version" \
+                --message="Bump \`$cask\` to \`$version\`"
+            else
+              echo "\`$cask\` is up to date"
+            fi
+          done
