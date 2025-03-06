@@ -1,6 +1,6 @@
 cask "battery-toolkit" do
-  version "1.5"
-  sha256 "f83523b621b4e43cbbb7129f08dd2483137c3bb997efd704b9521803e7482075"
+  version "1.6"
+  sha256 "1a4d99b55e49b69465f526d783de8a2fa5e1648394989f6c8328ccd9d4b0d73f"
 
   url "https://github.com/mhaeuser/Battery-Toolkit/releases/download/#{version}/Battery-Toolkit-#{version}.zip"
   name "Battery Toolkit"
